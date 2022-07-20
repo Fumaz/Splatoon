@@ -1,0 +1,10 @@
+name: Splatoon
+version: '${project.version}'
+main: dev.fumaz.splatoon.Splatoon
+api-version: 1.19
+authors: [ Fumaz ]
+website: https://fumaz.dev
+commands:
+  play: { }
+  leave: { }
+  start: { }

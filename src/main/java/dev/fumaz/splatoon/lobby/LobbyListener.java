@@ -1,0 +1,74 @@
+package dev.fumaz.splatoon.lobby;
+
+import dev.fumaz.commons.bukkit.interfaces.FListener;
+import dev.fumaz.commons.bukkit.math.Locations;
+import dev.fumaz.splatoon.Splatoon;
+import dev.fumaz.splatoon.account.Account;
+import dev.fumaz.splatoon.account.AccountManager;
+import dev.fumaz.splatoon.arena.ArenaManager;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.FoodLevelChangeEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
+
+public class LobbyListener implements FListener {
+
+    private final AccountManager accountManager;
+    private final LobbyManager lobbyManager;
+    private final ArenaManager arenaManager;
+
+    public LobbyListener(Splatoon plugin, LobbyManager lobbyManager, AccountManager accountManager) {
+        this.lobbyManager = lobbyManager;
+        this.accountManager = accountManager;
+        this.arenaManager = plugin.getArenaManager();
+
+        register(plugin);
+    }
+
+    @EventHandler
+    public void onPlayerJoin(PlayerJoinEvent event) {
+        Account account = accountManager.getAccount(event.getPlayer());
+        lobbyManager.send(account);
+    }
+
+    @EventHandler
+    public void onPlayerMove(PlayerMoveEvent event) {
+        if (!event.hasChangedBlock()) {
+            return;
+        }
+
+        Location to = event.getTo();
+
+        if (to.getBlockX() < lobbyManager.getEntranceMin().getBlockX() || to.getBlockX() > lobbyManager.getEntranceMax().getBlockX()) {
+            return;
+        }
+
+        if (to.getBlockZ() < lobbyManager.getEntranceMin().getBlockZ() || to.getBlockZ() > lobbyManager.getEntranceMax().getBlockZ()) {
+            return;
+        }
+
+        if (to.getBlockY() < lobbyManager.getEntranceMin().getBlockY() || to.getBlockY() > lobbyManager.getEntranceMax().getBlockY()) {
+            return;
+        }
+
+        arenaManager.join(accountManager.getAccount(event.getPlayer()));
+    }
+
+    @EventHandler
+    public void onFoodLevelChange(FoodLevelChangeEvent event) {
+        event.setFoodLevel(20);
+    }
+
+    @EventHandler
+    public void onEntityDamage(EntityDamageEvent event) {
+        if (event.getCause() == EntityDamageEvent.DamageCause.CUSTOM) {
+            return;
+        }
+
+        event.setCancelled(true);
+    }
+
+}
