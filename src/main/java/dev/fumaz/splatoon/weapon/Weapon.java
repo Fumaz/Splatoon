@@ -17,8 +17,8 @@ public abstract class Weapon implements FListener {
 
     protected final Splatoon plugin;
 
-    private final PlayerCooldown abilityCooldown;
-    private final PlayerCooldown ultimateCooldown;
+    protected final PlayerCooldown abilityCooldown;
+    protected final PlayerCooldown ultimateCooldown;
 
     public Weapon(Splatoon plugin) {
         this.plugin = plugin;
