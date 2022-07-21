@@ -14,12 +14,12 @@ public class InkTask extends ArenaTask {
     public void tick(int ticks) {
         arena.getPlayers().forEach(account -> {
             if (!account.isSquid()) {
-                account.getPlayer().setExp(account.getInk() / 100f);
+                account.getPlayer().setExp(Math.min(1f, account.getInk() / 100f));
                 return;
             }
 
             account.rechargeInk(1);
-            account.getPlayer().setExp(account.getInk() / 100f);
+            account.getPlayer().setExp(Math.min(1f, account.getInk() / 100f));
         });
     }
 

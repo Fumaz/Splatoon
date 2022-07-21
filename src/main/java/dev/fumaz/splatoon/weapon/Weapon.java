@@ -72,10 +72,6 @@ public abstract class Weapon implements FListener {
                 .build();
     }
 
-    public void equip(Account account) {
-        account.getInventory().setItem(0, getIcon());
-    }
-
     public void ability(Account account, PlayerInteractEvent event) {
         if (abilityCooldown.has(account.getPlayer())) {
             return;
