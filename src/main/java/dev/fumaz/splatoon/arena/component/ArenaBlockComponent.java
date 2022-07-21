@@ -35,9 +35,11 @@ public class ArenaBlockComponent extends ArenaComponent{
     }
 
     public void splat(ArenaTeam team, Location location, int radius, double damage) {
-        Geometry.sphere(radius, vector -> {
-            Block block = location.clone().add(vector).getBlock();
-            add(team, block);
+        Geometry.circle(radius, vector -> {
+            for (int y = -radius; y <= radius; ++y) {
+                Block block = location.clone().add(vector).add(0, y, 0).getBlock();
+                add(team, block);
+            }
         });
 
         location.getNearbyEntitiesByType(Player.class, radius).forEach(player -> {
@@ -49,13 +51,6 @@ public class ArenaBlockComponent extends ArenaComponent{
 
             player.damage(damage);
         });
-    }
-
-    public int getBlocksByTeam(ArenaTeam team) {
-        return (int) blocks.entrySet()
-                .stream()
-                .filter(entry -> entry.getValue() == team)
-                .count();
     }
 
     public ArenaTeam getTeamByBlock(Block block) {
