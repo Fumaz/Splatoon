@@ -116,10 +116,12 @@ public class ArenaListenerComponent extends ArenaComponent implements FListener 
         Account account = accountManager.getAccount(event.getPlayer());
 
         if (!arena.isAlive(account)) {
+            event.setCancelled(true);
             return;
         }
 
         if (arena.getState() != ArenaState.PLAYING) {
+            event.setCancelled(true);
             return;
         }
 

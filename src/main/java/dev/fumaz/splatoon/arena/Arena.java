@@ -74,6 +74,7 @@ public class Arena {
         account.teleport(map.getLocation("waiting"));
         account.getPlayer().setGameMode(GameMode.ADVENTURE);
         account.setScoreboardType(ScoreboardType.WAITING);
+        plugin.getHotbarItemManager().getHotbarItems(HotbarItemCategory.WAITING).forEach(item -> item.give(account));
 
         broadcast(ChatColor.LIGHT_PURPLE + account.getName() + ChatColor.YELLOW + " joined the game! (" + ChatColor.LIGHT_PURPLE + getPlayers().size() + ChatColor.YELLOW + "/" + ChatColor.LIGHT_PURPLE + "8" + ChatColor.YELLOW + ")");
     }

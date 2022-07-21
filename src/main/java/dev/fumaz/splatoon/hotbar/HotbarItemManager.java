@@ -24,6 +24,10 @@ public class HotbarItemManager {
         addHotbarItem(new HotbarItem(ItemBuilder.of(Material.INK_SAC)
                 .displayName(ChatColor.AQUA + "" + ChatColor.BOLD + "SQUID MODE")
                 .build(), 1, (account, event) -> {}), HotbarItemCategory.PLAYING);
+
+        addHotbarItem(new HotbarItem(ItemBuilder.of(Material.DIAMOND_AXE)
+                .displayName(ChatColor.GREEN + "" + ChatColor.BOLD + "WEAPONS")
+                .build(), 0, ((account, event) -> plugin.getWeaponManager().showGUI(account))), HotbarItemCategory.WAITING);
     }
 
     public void addHotbarItem(HotbarItem item, HotbarItemCategory category) {

@@ -4,10 +4,13 @@ import dev.fumaz.commons.bukkit.gui.Gui;
 import dev.fumaz.commons.bukkit.gui.item.ClickableGuiItem;
 import dev.fumaz.commons.bukkit.gui.item.GuiItemBuilder;
 import dev.fumaz.commons.bukkit.gui.page.ListPage;
+import dev.fumaz.commons.bukkit.item.ItemBuilder;
 import dev.fumaz.commons.bukkit.misc.Logging;
 import dev.fumaz.commons.reflection.Reflections;
 import dev.fumaz.splatoon.Splatoon;
 import dev.fumaz.splatoon.account.Account;
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -36,13 +39,19 @@ public class WeaponManager {
 
     public void showGUI(Account account) {
         Gui gui = new Gui(plugin, "Weapons", 3);
-        ListPage page = new ListPage(gui);
+        ListPage page = new ListPage(gui, new GuiItemBuilder()
+                .item(ItemBuilder.of(Material.PINK_STAINED_GLASS_PANE)
+                        .displayName(ChatColor.GRAY + "")
+                        .build())
+                .build());
 
         weapons.forEach(weapon -> {
             page.addItem(new GuiItemBuilder()
                     .item(weapon.getIcon())
                     .onClick(event -> {
                         account.setWeapon(weapon);
+                        account.getPlayer().closeInventory();
+                        account.sendMessage(ChatColor.YELLOW + "You have equipped " + weapon.getDisplayName() + ChatColor.YELLOW + ".");
                     })
                     .build());
         });
@@ -50,6 +59,7 @@ public class WeaponManager {
         gui.setPage(page);
         gui.show(account.getPlayer());
     }
+
     private void load() {
         logger.info("Loading weapons...");
 
