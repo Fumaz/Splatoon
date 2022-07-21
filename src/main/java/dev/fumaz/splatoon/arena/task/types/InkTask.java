@@ -18,6 +18,11 @@ public class InkTask extends ArenaTask {
                 return;
             }
 
+            if (account.getPlayer().getLocation().subtract(0, 1, 0).getBlock().getType() != account.getTeam().getColor().getMaterial()) {
+                account.getPlayer().setExp(Math.min(1f, account.getInk() / 100f));
+                return;
+            }
+
             account.rechargeInk(1);
             account.getPlayer().setExp(Math.min(1f, account.getInk() / 100f));
         });

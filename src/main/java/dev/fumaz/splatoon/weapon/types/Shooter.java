@@ -8,6 +8,7 @@ import dev.fumaz.splatoon.arena.team.ArenaTeam;
 import dev.fumaz.splatoon.weapon.Weapon;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Snowball;
 import org.bukkit.entity.TNTPrimed;
@@ -99,6 +100,7 @@ public class Shooter extends Weapon {
         Snowball snowball = player.launchProjectile(Snowball.class);
 
         projectiles.put(snowball, new ArenaInfo(account.getArena(), account.getTeam()));
+        player.playSound(player.getLocation(), Sound.ENTITY_SNOWBALL_THROW, 1f, 1f);
     }
 
     @Override

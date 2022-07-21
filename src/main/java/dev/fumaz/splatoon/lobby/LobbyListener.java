@@ -2,14 +2,15 @@ package dev.fumaz.splatoon.lobby;
 
 import dev.fumaz.commons.bukkit.cache.PlayerCooldown;
 import dev.fumaz.commons.bukkit.interfaces.FListener;
-import dev.fumaz.commons.bukkit.math.Locations;
 import dev.fumaz.splatoon.Splatoon;
 import dev.fumaz.splatoon.account.Account;
 import dev.fumaz.splatoon.account.AccountManager;
 import dev.fumaz.splatoon.arena.ArenaManager;
-import org.bukkit.ChatColor;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -19,6 +20,7 @@ import java.util.concurrent.TimeUnit;
 
 public class LobbyListener implements FListener {
 
+    private final Splatoon plugin;
     private final AccountManager accountManager;
     private final LobbyManager lobbyManager;
     private final ArenaManager arenaManager;
@@ -26,6 +28,7 @@ public class LobbyListener implements FListener {
     private final PlayerCooldown cooldown;
 
     public LobbyListener(Splatoon plugin, LobbyManager lobbyManager, AccountManager accountManager) {
+        this.plugin = plugin;
         this.lobbyManager = lobbyManager;
         this.accountManager = accountManager;
         this.arenaManager = plugin.getArenaManager();
@@ -36,8 +39,10 @@ public class LobbyListener implements FListener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        Account account = accountManager.getAccount(event.getPlayer());
-        lobbyManager.send(account);
+        Bukkit.getScheduler().runTaskLater(plugin, () -> {
+            Account account = accountManager.getAccount(event.getPlayer());
+            lobbyManager.send(account);
+        }, 5L);
     }
 
     @EventHandler

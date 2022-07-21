@@ -16,6 +16,7 @@ import dev.fumaz.splatoon.lobby.LobbyManager;
 import dev.fumaz.splatoon.scoreboard.ScoreboardType;
 import org.bukkit.*;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Squid;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -51,7 +52,7 @@ public class Arena {
 
         this.listener = new ArenaListenerComponent(plugin, this);
         this.players = new ArenaPlayerComponent(this);
-        this.spectators = new ArenaSpectatorComponent(this);
+        this.spectators = new ArenaSpectatorComponent(this, plugin.getHotbarItemManager());
         this.teams = new ArenaTeamComponent(this);
         this.tasks = new ArenaTaskComponent(plugin, this);
         this.blocks = new ArenaBlockComponent(this, plugin.getAccountManager());
@@ -74,7 +75,7 @@ public class Arena {
         account.teleport(map.getLocation("waiting"));
         account.getPlayer().setGameMode(GameMode.ADVENTURE);
         account.setScoreboardType(ScoreboardType.WAITING);
-        plugin.getHotbarItemManager().getHotbarItems(HotbarItemCategory.WAITING).forEach(item -> item.give(account));
+        plugin.getHotbarItemManager().getHotbarItems(HotbarItemCategory.WAITING, HotbarItemCategory.LEAVE).forEach(item -> item.give(account));
 
         broadcast(ChatColor.LIGHT_PURPLE + account.getName() + ChatColor.YELLOW + " joined the game! (" + ChatColor.LIGHT_PURPLE + getPlayers().size() + ChatColor.YELLOW + "/" + ChatColor.LIGHT_PURPLE + "8" + ChatColor.YELLOW + ")");
     }
@@ -105,6 +106,11 @@ public class Arena {
     public void kill(Account account) {
         spectators.add(account);
 
+        Squid squid = account.getWorld().spawn(account.getPlayer().getLocation(), Squid.class);
+        squid.setCustomName(account.getDisplayName());
+        squid.setCustomNameVisible(true);
+
+        getBlocks().splat(getTeams().getOppositeTeam(account.getTeam()), account.getPlayer().getLocation(), 5, 0);
         account.sendTitle(ChatColor.RED + "" + ChatColor.BOLD + "YOU GOT SPLATTED!", null);
 
         AtomicInteger seconds = new AtomicInteger(6);
@@ -113,6 +119,10 @@ public class Arena {
                 respawn(account);
                 task.cancel();
                 return;
+            }
+
+            if (seconds.get() == 5) {
+                squid.damage(100);
             }
 
             account.sendTitle(ChatColor.LIGHT_PURPLE + "" + seconds.get(), null);

@@ -2,13 +2,16 @@ package dev.fumaz.splatoon.weapon.types;
 
 import com.google.common.collect.ImmutableList;
 import dev.fumaz.commons.bukkit.item.ItemBuilder;
+import dev.fumaz.commons.bukkit.misc.Scheduler;
 import dev.fumaz.splatoon.Splatoon;
 import dev.fumaz.splatoon.account.Account;
 import dev.fumaz.splatoon.arena.Arena;
 import dev.fumaz.splatoon.arena.team.ArenaTeam;
 import dev.fumaz.splatoon.weapon.Weapon;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
@@ -23,6 +26,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Charger extends Weapon {
 
@@ -54,6 +59,7 @@ public class Charger extends Weapon {
         return ItemBuilder.of(Material.BOW)
                 .addItemFlags(ItemFlag.HIDE_ENCHANTS)
                 .enchant(Enchantment.ARROW_INFINITE, 1)
+                .unbreakable()
                 .build();
     }
 
@@ -90,7 +96,7 @@ public class Charger extends Weapon {
 
     @Override
     public int getUltimateCooldown() {
-        return 60;
+        return (int) TimeUnit.SECONDS.toMillis(60);
     }
 
     @Override
@@ -125,17 +131,11 @@ public class Charger extends Weapon {
             return;
         }
 
-        if (abilityCooldown.has(account.getUUID())) {
-            return;
-        }
-
         if (!account.hasInk(getAbilityInk())) {
             return;
         }
 
-        abilityCooldown.put(account.getUUID());
         account.useInk(getAbilityInk());
-
         projectiles.put(arrow, new ArenaInfo(account.getArena(), account.getTeam(), event.getForce()));
     }
 
@@ -152,7 +152,24 @@ public class Charger extends Weapon {
         ArenaInfo info = projectiles.remove(arrow);
         float power = info.force * 20;
 
+        arrow.remove();
+
         info.arena.getBlocks().splat(info.team, arrow.getLocation(), 3, power);
+    }
+
+    @Override
+    protected void onUltimate(Account account, PlayerInteractEvent event) {
+        AtomicInteger arrows = new AtomicInteger(100);
+        Scheduler.of(plugin).runTaskTimer(task -> {
+            if (arrows.decrementAndGet() < 0) {
+                task.cancel();
+                return;
+            }
+
+            Arrow arrow = account.getPlayer().launchProjectile(Arrow.class);
+            projectiles.put(arrow, new ArenaInfo(account.getArena(), account.getTeam(), 1));
+            account.getPlayer().playSound(account.getPlayer().getLocation(), Sound.ENTITY_ARROW_SHOOT, 1, 1);
+        }, 0, 1);
     }
 
     private static class ArenaInfo {

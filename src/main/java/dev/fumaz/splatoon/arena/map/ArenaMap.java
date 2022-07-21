@@ -1,5 +1,6 @@
 package dev.fumaz.splatoon.arena.map;
 
+import org.bukkit.GameRule;
 import org.bukkit.Location;
 import org.bukkit.World;
 
@@ -17,6 +18,11 @@ public class ArenaMap {
         this.world = world;
         this.locations = locations;
         this.radius = radius;
+
+        world.setGameRule(GameRule.DO_MOB_SPAWNING, false);
+        world.setGameRule(GameRule.ANNOUNCE_ADVANCEMENTS, false);
+        world.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, false);
+        world.setFullTime(1000);
     }
 
     public String getName() {

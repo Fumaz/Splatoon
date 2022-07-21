@@ -111,21 +111,21 @@ public class ArenaListenerComponent extends ArenaComponent implements FListener 
         account.getArena().kill(account);
     }
 
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
         Account account = accountManager.getAccount(event.getPlayer());
 
+        event.setReviveHealth(account.getPlayer().getMaxHealth());
+        event.setCancelled(true);
+
         if (!arena.isAlive(account)) {
-            event.setCancelled(true);
             return;
         }
 
         if (arena.getState() != ArenaState.PLAYING) {
-            event.setCancelled(true);
             return;
         }
 
-        event.setCancelled(true);
         account.getArena().kill(account);
     }
 

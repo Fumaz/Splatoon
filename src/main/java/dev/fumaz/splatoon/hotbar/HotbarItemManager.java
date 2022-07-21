@@ -28,6 +28,16 @@ public class HotbarItemManager {
         addHotbarItem(new HotbarItem(ItemBuilder.of(Material.DIAMOND_AXE)
                 .displayName(ChatColor.GREEN + "" + ChatColor.BOLD + "WEAPONS")
                 .build(), 0, ((account, event) -> plugin.getWeaponManager().showGUI(account))), HotbarItemCategory.WAITING);
+
+        addHotbarItem(new HotbarItem(ItemBuilder.of(Material.RED_BED)
+                .displayName(ChatColor.RED + "" + ChatColor.BOLD + "LEAVE")
+                .build(), 8, (account, event) -> {
+            if (account.getArena() == null) {
+                return;
+            }
+
+            account.getArena().leave(account);
+        }), HotbarItemCategory.LEAVE);
     }
 
     public void addHotbarItem(HotbarItem item, HotbarItemCategory category) {

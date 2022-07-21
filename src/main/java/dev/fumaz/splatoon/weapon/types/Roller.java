@@ -6,11 +6,13 @@ import dev.fumaz.splatoon.account.Account;
 import dev.fumaz.splatoon.weapon.Weapon;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class Roller extends Weapon {
 
@@ -71,7 +73,7 @@ public class Roller extends Weapon {
 
     @Override
     public int getUltimateCooldown() {
-        return 60;
+        return (int) TimeUnit.SECONDS.toMillis(60);
     }
 
     @Override
@@ -108,6 +110,10 @@ public class Roller extends Weapon {
 
         account.useInk(getAbilityInk());
         account.getArena().getBlocks().splat(account.getTeam(), account.getPlayer().getLocation(), 3, 100);
+
+        if (ticks % 25 == 0) {
+            account.getArena().getAccounts().forEach(a -> a.getPlayer().playSound(account.getPlayer().getLocation(), Sound.ENTITY_SLIME_SQUISH, 1f, 1f));
+        }
     }
 
 }
