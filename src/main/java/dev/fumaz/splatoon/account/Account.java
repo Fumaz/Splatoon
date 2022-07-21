@@ -7,11 +7,16 @@ import dev.fumaz.splatoon.scoreboard.ScoreboardType;
 import dev.fumaz.splatoon.scoreboard.SplatoonScoreboard;
 import dev.fumaz.splatoon.weapon.Weapon;
 import dev.fumaz.splatoon.weapon.types.Shooter;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Squid;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.Team;
 
 import java.util.UUID;
 
@@ -26,6 +31,9 @@ public class Account {
 
     private boolean hidden = false;
     private boolean canMove = true;
+    private Squid squid = null;
+
+    private int ink = 100;
 
     public Account(Player player) {
         this.player = player;
@@ -38,7 +46,32 @@ public class Account {
     }
 
     public String getDisplayName() {
-        return getName(); // TODO: Change to display name
+        if (team == null) {
+            return getName();
+        }
+
+        return team.getColor().getChatColor() + getName();
+    }
+
+    public void updateName() {
+        player.setDisplayName(getDisplayName());
+        player.setPlayerListName(getDisplayName());
+
+        JavaPlugin.getPlugin(Splatoon.class).getAccountManager().getAccounts().forEach(account -> {
+            Scoreboard scoreboard = account.getScoreboard().getScoreboard();
+            Team scoreboardTeam = scoreboard.getTeam(team != null ? team.getName() : getName());
+
+            if (scoreboardTeam == null) {
+                scoreboardTeam = scoreboard.registerNewTeam(team != null ? team.getName() : getName());
+                scoreboardTeam.setPrefix(team != null ? team.getColor().getChatColor().toString() : ChatColor.WHITE.toString());
+            }
+
+            if (scoreboardTeam.hasPlayer(player)) {
+                return;
+            }
+
+            scoreboardTeam.addPlayer(player);
+        });
     }
 
     public void clear() {
@@ -49,7 +82,13 @@ public class Account {
         getPlayer().setLevel(0);
         getPlayer().setInvisible(false);
         getPlayer().setCollidable(true);
+        setInk(100);
+        setSquid(null);
         show();
+        getPlayer().setHealth(getPlayer().getMaxHealth());
+        getPlayer().setFoodLevel(20);
+
+        updateName();
     }
 
     public void teleport(Location location) {
@@ -128,16 +167,61 @@ public class Account {
         return hidden;
     }
 
-    public void setCanMove(boolean canMove) {
-        this.canMove = canMove;
-    }
-
     public boolean isCanMove() {
         return canMove;
     }
 
+    public void setCanMove(boolean canMove) {
+        this.canMove = canMove;
+    }
+
     public UUID getUUID() {
         return player.getUniqueId();
+    }
+
+    public int getInk() {
+        return ink;
+    }
+
+    public void setInk(int ink) {
+        this.ink = ink;
+    }
+
+    public boolean hasInk(int amount) {
+        return ink >= amount;
+    }
+
+    public void useInk(int amount) {
+        ink -= amount;
+    }
+
+    public void rechargeInk(int amount) {
+        ink += amount;
+    }
+
+    public boolean isSquid() {
+        return squid != null;
+    }
+
+    public Squid getSquid() {
+        return squid;
+    }
+
+    public void setSquid(Squid squid) {
+        this.squid = squid;
+    }
+
+    public void removeSquid() {
+        if (squid == null) {
+            return;
+        }
+
+        squid.remove();
+        show();
+        player.setInvisible(false);
+        player.removePotionEffect(PotionEffectType.INVISIBILITY);
+        player.setCollidable(true);
+        squid = null;
     }
 
 }

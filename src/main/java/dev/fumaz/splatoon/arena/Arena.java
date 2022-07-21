@@ -8,6 +8,7 @@ import dev.fumaz.splatoon.account.Account;
 import dev.fumaz.splatoon.arena.component.*;
 import dev.fumaz.splatoon.arena.map.ArenaMap;
 import dev.fumaz.splatoon.arena.state.ArenaState;
+import dev.fumaz.splatoon.arena.task.types.InkTask;
 import dev.fumaz.splatoon.arena.task.types.WeaponTask;
 import dev.fumaz.splatoon.arena.team.ArenaTeam;
 import dev.fumaz.splatoon.hotbar.HotbarItemCategory;
@@ -53,7 +54,7 @@ public class Arena {
         this.spectators = new ArenaSpectatorComponent(this);
         this.teams = new ArenaTeamComponent(this);
         this.tasks = new ArenaTaskComponent(plugin, this);
-        this.blocks = new ArenaBlockComponent(this);
+        this.blocks = new ArenaBlockComponent(this, plugin.getAccountManager());
         this.time = new ArenaTimeComponent(this);
         this.bossBar = new ArenaBossBarComponent(this);
 
@@ -103,6 +104,8 @@ public class Arena {
     public void kill(Account account) {
         spectators.add(account);
 
+        account.sendTitle(ChatColor.RED + "" + ChatColor.BOLD + "YOU GOT SPLATTED!", null);
+
         AtomicInteger seconds = new AtomicInteger(6);
         scheduler.runTaskTimer(task -> {
             if (seconds.decrementAndGet() <= 0) {
@@ -118,6 +121,7 @@ public class Arena {
     public void respawn(Account account) {
         spectators.remove(account);
 
+        account.clear();
         account.setScoreboardType(ScoreboardType.PLAYING);
         account.teleport(teams.getTeamSpawnLocation(teams.getTeam(account)));
         account.setCanMove(false);
@@ -175,6 +179,8 @@ public class Arena {
             return;
         }
 
+        tasks.startTask(InkTask.class);
+
         state = ArenaState.PLAYING;
         getTeams().getTeams().forEach(team -> {
             Location teamSpawn = map.getLocation("team-spawn-" + getTeams().getTeams().indexOf(team));
@@ -209,6 +215,7 @@ public class Arena {
         state = ArenaState.ENDING;
 
         tasks.stopTask(WeaponTask.class);
+        tasks.stopTask(InkTask.class);
 
         Map<ArenaTeam, Double> percentages = calculatePercentages();
         ArenaTeam winner = percentages.entrySet()
@@ -297,19 +304,27 @@ public class Arena {
         Map<ArenaTeam, Integer> teamBlocks = new HashMap<>();
         AtomicInteger totalBlocks = new AtomicInteger();
 
-        Geometry.cube(map.getRadius(), vector -> {
-            Location location = map.getLocation("center").clone().add(vector);
-            Block block = location.getBlock();
+        Location center = map.getLocation("center");
 
-            if (block.isEmpty()) {
-                return;
+        for (int x = -map.getRadius(); x <= map.getRadius(); ++x) {
+            for (int z = -map.getRadius(); z <= map.getRadius(); ++z) {
+                Location location = center.clone().add(x, 0, z);
+                int y = map.getWorld().getHighestBlockYAt(location);
+                location.setY(y);
+
+                Block block = location.getBlock();
+
+                if (block.isEmpty()) {
+                    continue;
+                }
+
+                totalBlocks.getAndIncrement();
+                ArenaTeam team = blocks.getTeamByBlock(block);
+
+                if (team != null) {
+                    teamBlocks.merge(team, 1, Integer::sum);
+                }
             }
-
-            totalBlocks.getAndIncrement();
-        });
-
-        for (ArenaTeam team : teams.getTeams()) {
-            teamBlocks.put(team, blocks.getBlocksByTeam(team));
         }
 
         Map<ArenaTeam, Double> percentages = new HashMap<>();

@@ -89,6 +89,11 @@ public class Shooter extends Weapon {
     }
 
     @Override
+    public int getAbilityInk() {
+        return 1;
+    }
+
+    @Override
     protected void onAbility(Account account, PlayerInteractEvent event) {
         Player player = account.getPlayer();
         Snowball snowball = player.launchProjectile(Snowball.class);
@@ -119,7 +124,7 @@ public class Shooter extends Weapon {
             return;
         }
 
-        info.arena.getBlocks().splat(info.team, snowball.getLocation(), 2, 3);
+        info.arena.getBlocks().splat(info.team, snowball.getLocation(), 2, 5);
         event.setCancelled(true);
     }
 
@@ -135,7 +140,7 @@ public class Shooter extends Weapon {
             return;
         }
 
-        info.arena.getBlocks().splat(info.team, tnt.getLocation(), 5, 10);
+        info.arena.getBlocks().splat(info.team, tnt.getLocation(), 5, 15);
         event.setCancelled(true);
     }
 

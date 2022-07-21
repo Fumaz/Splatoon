@@ -1,5 +1,6 @@
 package dev.fumaz.splatoon.lobby;
 
+import dev.fumaz.commons.bukkit.cache.PlayerCooldown;
 import dev.fumaz.commons.bukkit.interfaces.FListener;
 import dev.fumaz.commons.bukkit.math.Locations;
 import dev.fumaz.splatoon.Splatoon;
@@ -14,16 +15,21 @@ import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 
+import java.util.concurrent.TimeUnit;
+
 public class LobbyListener implements FListener {
 
     private final AccountManager accountManager;
     private final LobbyManager lobbyManager;
     private final ArenaManager arenaManager;
 
+    private final PlayerCooldown cooldown;
+
     public LobbyListener(Splatoon plugin, LobbyManager lobbyManager, AccountManager accountManager) {
         this.lobbyManager = lobbyManager;
         this.accountManager = accountManager;
         this.arenaManager = plugin.getArenaManager();
+        this.cooldown = new PlayerCooldown(15, TimeUnit.SECONDS);
 
         register(plugin);
     }
@@ -54,6 +60,11 @@ public class LobbyListener implements FListener {
             return;
         }
 
+        if (cooldown.has(event.getPlayer())) {
+            return;
+        }
+
+        cooldown.put(event.getPlayer());
         arenaManager.join(accountManager.getAccount(event.getPlayer()));
     }
 

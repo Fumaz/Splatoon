@@ -16,10 +16,11 @@ public enum ScoreboardType {
             Account account = scoreboard.getAccount();
 
             scoreboard.addEntry(new BlankScoreboardEntry());
-            scoreboard.addEntry(new StaticScoreboardEntry(ChatColor.WHITE + "Coins: " + ChatColor.LIGHT_PURPLE + "0", true)); // TODO
+            scoreboard.addEntry(new StaticScoreboardEntry(ChatColor.WHITE + "Level: " + ChatColor.YELLOW + "0", true));
+            scoreboard.addEntry(new StaticScoreboardEntry(ChatColor.WHITE + "Coins: " + ChatColor.YELLOW + "0", true)); // TODO
             scoreboard.addEntry(new BlankScoreboardEntry());
-            scoreboard.addEntry(new DynamicScoreboardEntry(() -> ChatColor.WHITE + "Weapon: "+ ChatColor.LIGHT_PURPLE + account.getWeapon().getName(), true));
-            scoreboard.addEntry(new DynamicScoreboardEntry(() -> ChatColor.WHITE + "Gear: "+ ChatColor.LIGHT_PURPLE + "None", true)); // TODO
+            scoreboard.addEntry(new DynamicScoreboardEntry(() -> ChatColor.WHITE + "Weapon: "+ ChatColor.YELLOW + account.getWeapon().getName(), true));
+            scoreboard.addEntry(new DynamicScoreboardEntry(() -> ChatColor.WHITE + "Gear: "+ ChatColor.YELLOW + "None", true)); // TODO
             scoreboard.addEntry(new BlankScoreboardEntry());
             scoreboard.addEntry(new StaticScoreboardEntry(ChatColor.LIGHT_PURPLE + "fumaz.dev", true));
         }
@@ -30,6 +31,9 @@ public enum ScoreboardType {
             Account account = scoreboard.getAccount();
             Arena arena = account.getArena();
 
+            scoreboard.addEntry(new BlankScoreboardEntry());
+            scoreboard.addEntry(new StaticScoreboardEntry(ChatColor.WHITE + "Level: " + ChatColor.YELLOW + "0", true));
+            scoreboard.addEntry(new StaticScoreboardEntry(ChatColor.WHITE + "Coins: " + ChatColor.YELLOW + "0", true)); // TODO
             scoreboard.addEntry(new BlankScoreboardEntry());
             scoreboard.addEntry(new DynamicScoreboardEntry(() -> ChatColor.WHITE + "Starts in: " + ChatColor.YELLOW + arena.getTime().getWaitingTime() + "s", true));
             scoreboard.addEntry(new DynamicScoreboardEntry(() -> ChatColor.WHITE + "Players: " + ChatColor.YELLOW + arena.getPlayers().size(), true));

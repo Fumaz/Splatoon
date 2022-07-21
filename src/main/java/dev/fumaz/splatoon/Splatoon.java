@@ -5,6 +5,7 @@ import dev.fumaz.commons.io.Files;
 import dev.fumaz.splatoon.account.AccountManager;
 import dev.fumaz.splatoon.arena.ArenaManager;
 import dev.fumaz.splatoon.arena.map.ArenaMapLoader;
+import dev.fumaz.splatoon.command.LeaveCommand;
 import dev.fumaz.splatoon.command.PlayCommand;
 import dev.fumaz.splatoon.command.StartCommand;
 import dev.fumaz.splatoon.hotbar.HotbarItemManager;
@@ -45,6 +46,7 @@ public final class Splatoon extends JavaPlugin {
 
         getCommand("play").setExecutor(new PlayCommand(accountManager, arenaManager));
         getCommand("start").setExecutor(new StartCommand(accountManager));
+        getCommand("leave").setExecutor(new LeaveCommand(accountManager));
     }
 
     public AccountManager getAccountManager() {

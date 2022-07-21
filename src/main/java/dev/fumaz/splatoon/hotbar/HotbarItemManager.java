@@ -23,7 +23,7 @@ public class HotbarItemManager {
 
         addHotbarItem(new HotbarItem(ItemBuilder.of(Material.INK_SAC)
                 .displayName(ChatColor.AQUA + "" + ChatColor.BOLD + "SQUID MODE")
-                .build(), 8, (account, event) -> {}), HotbarItemCategory.PLAYING);
+                .build(), 1, (account, event) -> {}), HotbarItemCategory.PLAYING);
     }
 
     public void addHotbarItem(HotbarItem item, HotbarItemCategory category) {

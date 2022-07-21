@@ -13,7 +13,9 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Squid;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -29,13 +31,11 @@ import java.util.Map;
 public class ArenaListenerComponent extends ArenaComponent implements FListener {
 
     private final AccountManager accountManager;
-    private final Map<Account, Squid> squids;
 
     public ArenaListenerComponent(Splatoon plugin, Arena arena) {
         super(arena);
 
         this.accountManager = plugin.getAccountManager();
-        this.squids = new HashMap<>();
 
         register(plugin);
     }
@@ -111,17 +111,9 @@ public class ArenaListenerComponent extends ArenaComponent implements FListener 
         account.getArena().kill(account);
     }
 
-    @EventHandler
-    public void onFatalDamage(EntityDamageEvent event) {
-        if (!(event.getEntity() instanceof Player player)) {
-            return;
-        }
-
-        if (player.getHealth() - event.getFinalDamage() > 0) {
-            return;
-        }
-
-        Account account = accountManager.getAccount(player);
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onPlayerDeath(PlayerDeathEvent event) {
+        Account account = accountManager.getAccount(event.getPlayer());
 
         if (!arena.isAlive(account)) {
             return;
@@ -171,7 +163,7 @@ public class ArenaListenerComponent extends ArenaComponent implements FListener 
         Player player = event.getPlayer();
         Account account = accountManager.getAccount(player);
 
-        if (!isInSquidMode(account)) {
+        if (!account.isSquid()) {
             return;
         }
 
@@ -203,7 +195,7 @@ public class ArenaListenerComponent extends ArenaComponent implements FListener 
         Player player = event.getPlayer();
         Account account = accountManager.getAccount(player);
 
-        if (!isInSquidMode(account)) {
+        if (!account.isSquid()) {
             return;
         }
 
@@ -248,12 +240,12 @@ public class ArenaListenerComponent extends ArenaComponent implements FListener 
             return;
         }
 
-        if (event.getNewSlot() != 8) {
-            clearSquid(account);
+        if (event.getNewSlot() != 1) {
+            account.removeSquid();
             return;
         }
 
-        if (squids.containsKey(account)) {
+        if (account.isSquid()) {
             return;
         }
 
@@ -264,7 +256,7 @@ public class ArenaListenerComponent extends ArenaComponent implements FListener 
         squid.setSilent(true);
         squid.setCollidable(false);
 
-        squids.put(account, squid);
+        account.setSquid(squid);
 
         player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 0, false, false, false));
         player.setCollidable(false);
@@ -284,24 +276,12 @@ public class ArenaListenerComponent extends ArenaComponent implements FListener 
             return;
         }
 
-        if (!isInSquidMode(account)) {
+        if (!account.isSquid()) {
             return;
         }
 
-        Squid squid = squids.get(account);
+        Squid squid = account.getSquid();
         squid.teleport(player.getLocation());
-    }
-
-    public void clearSquid(Account account) {
-        if(!squids.containsKey(account)){
-            return;
-        }
-
-        Squid squid = squids.remove(account);
-        squid.remove();
-        account.getPlayer().removePotionEffect(PotionEffectType.INVISIBILITY);
-        account.getPlayer().setCollidable(true);
-        account.show();
     }
 
     private boolean isNearTeamBlock(Account account) {
@@ -319,10 +299,6 @@ public class ArenaListenerComponent extends ArenaComponent implements FListener 
         Block b4 = world.getBlockAt(new Location(world, x, y, z - .5));
 
         return (blocks.getTeamByBlock(b1) == account.getTeam()) || (blocks.getTeamByBlock(b2) == account.getTeam()) || (blocks.getTeamByBlock(b3) == account.getTeam()) || (blocks.getTeamByBlock(b4) == account.getTeam());
-    }
-
-    private boolean isInSquidMode(Account account) {
-        return squids.containsKey(account);
     }
 
 }

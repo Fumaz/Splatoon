@@ -1,6 +1,8 @@
 package dev.fumaz.splatoon.arena.component;
 
 import dev.fumaz.commons.bukkit.math.Geometry;
+import dev.fumaz.splatoon.account.Account;
+import dev.fumaz.splatoon.account.AccountManager;
 import dev.fumaz.splatoon.arena.Arena;
 import dev.fumaz.splatoon.arena.team.ArenaTeam;
 import org.bukkit.Location;
@@ -13,11 +15,13 @@ import java.util.Map;
 
 public class ArenaBlockComponent extends ArenaComponent{
 
+    private final AccountManager accountManager;
     private final Map<Block, ArenaTeam> blocks;
 
-    public ArenaBlockComponent(Arena arena) {
+    public ArenaBlockComponent(Arena arena, AccountManager accountManager) {
         super(arena);
 
+        this.accountManager = accountManager;
         this.blocks = new HashMap<>();
     }
 
@@ -37,7 +41,9 @@ public class ArenaBlockComponent extends ArenaComponent{
         });
 
         location.getNearbyEntitiesByType(Player.class, radius).forEach(player -> {
-            if (team.contains(player)) {
+            Account account = accountManager.getAccount(player);
+
+            if (team.contains(account) || account.isHidden()) {
                 return;
             }
 

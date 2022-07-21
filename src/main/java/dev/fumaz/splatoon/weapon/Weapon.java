@@ -48,6 +48,8 @@ public abstract class Weapon implements FListener {
 
     public abstract int getUltimateCooldown();
 
+    public abstract int getAbilityInk();
+
     protected void onTick(Account account, int ticks) {
     }
 
@@ -79,6 +81,12 @@ public abstract class Weapon implements FListener {
             return;
         }
 
+        if (!account.hasInk(getAbilityInk())) {
+            account.getPlayer().sendTitle(ChatColor.RED + "" + ChatColor.BOLD + "NO INK!", ChatColor.WHITE + "Refill it using squid mode!", 0, 20, 0);
+            return;
+        }
+
+        account.useInk(getAbilityInk());
         abilityCooldown.put(account.getPlayer());
         onAbility(account, event);
     }
@@ -97,10 +105,8 @@ public abstract class Weapon implements FListener {
 
         if (ultimateSeconds > 0) {
             int ultimateMillis = (int) ultimateCooldown.getMillis(account.getPlayer().getUniqueId());
-            account.getPlayer().setExp(1f - ((float) ultimateMillis / (float) getUltimateCooldown()));
             account.sendActionBar(ChatColor.RED + "ULTIMATE RECHARGING");
         } else {
-            account.getPlayer().setExp(1f);
             account.sendActionBar(((ticks / 10) % 2 == 0 ? ChatColor.WHITE : ChatColor.YELLOW) + "ULTIMATE READY");
         }
 

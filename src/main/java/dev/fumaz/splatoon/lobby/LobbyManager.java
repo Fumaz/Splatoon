@@ -61,13 +61,13 @@ public class LobbyManager {
     }
 
     public void send(Account account) {
-        account.clear();
         account.setCanMove(true);
         account.show();
         account.setArena(null);
         account.setTeam(null);
         account.setScoreboardType(ScoreboardType.LOBBY);
         account.getPlayer().setGameMode(GameMode.ADVENTURE);
+        account.clear();
 
         account.getPlayer().teleport(getSpawn());
     }

@@ -36,7 +36,7 @@ public class ArenaMap {
     }
 
     public Location getLocation(String name) {
-        return locations.get(name);
+        return locations.get(name).clone();
     }
 
 }
