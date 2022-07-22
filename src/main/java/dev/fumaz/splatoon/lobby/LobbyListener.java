@@ -15,6 +15,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -121,4 +122,11 @@ public class LobbyListener implements FListener {
         event.setCancelled(true);
     }
 
+    @EventHandler
+    public void onAsyncPlayerChatEvent(AsyncPlayerChatEvent event) {
+        Account account = accountManager.getAccount(event.getPlayer());
+        String team = account.getTeam() == null ? "" : (account.getTeam().getBoldDisplayName() + " ");
+
+        event.setFormat(team + ChatColor.WHITE + event.getPlayer().getDisplayName() + ChatColor.GOLD + " » " + ChatColor.WHITE + "%2$s");
+    }
 }

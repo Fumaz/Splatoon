@@ -13,7 +13,7 @@ public class VisibilityManager {
         this.plugin = plugin;
         this.accountManager = accountManager;
 
-        Scheduler.of(plugin).runTaskTimer(this::update, 0, 20);
+        Scheduler.of(plugin).runTaskTimer(this::update, 0, 5);
     }
 
     private void update() {
@@ -23,8 +23,10 @@ public class VisibilityManager {
                     if (target.getPlayer().canSee(victim.getPlayer())) {
                         target.getPlayer().hidePlayer(victim.getPlayer());
                     }
-
-                    return;
+                } else {
+                    if (!target.getPlayer().canSee(victim.getPlayer())) {
+                        target.getPlayer().showPlayer(victim.getPlayer());
+                    }
                 }
 
                 boolean hidden = victim.isHidden();

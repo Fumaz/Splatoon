@@ -7,7 +7,7 @@ import org.bukkit.Material;
 import java.awt.*;
 
 public enum TeamColor {
-    WHITE(ChatColor.WHITE, Material.WHITE_CONCRETE),
+    // WHITE(ChatColor.WHITE, Material.WHITE_CONCRETE),
     ORANGE(ChatColor.GOLD, Material.ORANGE_CONCRETE),
     PURPLE(ChatColor.DARK_PURPLE, Material.MAGENTA_CONCRETE),
     AQUA(ChatColor.AQUA, Material.LIGHT_BLUE_CONCRETE),

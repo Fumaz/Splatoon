@@ -107,10 +107,6 @@ public class Arena {
     public void kill(Account account) {
         spectators.add(account);
 
-        Squid squid = account.getWorld().spawn(account.getPlayer().getLocation(), Squid.class);
-        squid.setCustomName(account.getDisplayName());
-        squid.setCustomNameVisible(true);
-
         account.sendTitle(ChatColor.RED + "" + ChatColor.BOLD + "YOU GOT SPLATTED!", null);
 
         if (account.getPlayer().getKiller() == null) {
@@ -128,12 +124,8 @@ public class Arena {
                 return;
             }
 
-            if (seconds.get() == 5) {
-                squid.damage(100);
-            }
-
-            account.sendTitle(ChatColor.LIGHT_PURPLE + "" + seconds.get(), null);
-        }, 0, 20);
+            account.sendTitle(ChatColor.GREEN + "" + ChatColor.BOLD + seconds.get(), null);
+        }, 20, 20);
     }
 
     public void respawn(Account account) {
@@ -149,8 +141,6 @@ public class Arena {
         bossBar.remove(account);
         bossBar.add(account);
 
-        account.getPlayer().setGlowing(true);
-
         Queue<String> messages = new LinkedList<>(Arrays.asList("READY", "SET", "SPLAT!"));
 
         scheduler.runTaskTimer(task -> {
@@ -161,7 +151,7 @@ public class Arena {
                 account.setCanMove(true);
             }
 
-            account.sendTitle(ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + message, null);
+            account.sendTitle(ChatColor.GREEN + "" + ChatColor.BOLD + message, null);
         }, 0, 20);
     }
 
@@ -262,8 +252,8 @@ public class Arena {
                         account.getPlayer().playSound(account.getPlayer().getLocation(), team == winner ? Sound.ENTITY_PLAYER_LEVELUP : Sound.ENTITY_PLAYER_DEATH, 1f, 1f);
                         account.sendMessage(team == winner ? (ChatColor.GOLD + "" + ChatColor.BOLD + "YOU WIN!") : (ChatColor.RED + "" + ChatColor.BOLD + "YOU LOSE!"));
                         account.sendMessage("");
-                        account.sendMessage(team.getDisplayName() + ": " + ChatColor.LIGHT_PURPLE + percentages.get(team) + "%");
-                        account.sendMessage(teams.getOppositeTeam(team).getDisplayName() + ": " + ChatColor.LIGHT_PURPLE + percentages.get(teams.getOppositeTeam(team)) + "%");
+                        account.sendMessage(team.getBoldDisplayName() + ": " + ChatColor.LIGHT_PURPLE + percentages.get(team) + "%");
+                        account.sendMessage(teams.getOppositeTeam(team).getBoldDisplayName() + ": " + ChatColor.LIGHT_PURPLE + percentages.get(teams.getOppositeTeam(team)) + "%");
                     });
                 });
 

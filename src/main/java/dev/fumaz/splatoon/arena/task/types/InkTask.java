@@ -3,6 +3,8 @@ package dev.fumaz.splatoon.arena.task.types;
 import dev.fumaz.splatoon.Splatoon;
 import dev.fumaz.splatoon.arena.Arena;
 import dev.fumaz.splatoon.arena.task.ArenaTask;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 public class InkTask extends ArenaTask {
 
@@ -24,6 +26,7 @@ public class InkTask extends ArenaTask {
             }
 
             account.rechargeInk(3);
+            account.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 10, 3, false, false, false));
             account.getPlayer().setExp(Math.min(1f, account.getInk() / 100f));
         });
     }

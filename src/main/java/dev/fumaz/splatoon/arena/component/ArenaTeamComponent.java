@@ -74,7 +74,7 @@ public class ArenaTeamComponent extends ArenaComponent{
     }
 
     public Location getTeamSpawnLocation(ArenaTeam team) {
-        return arena.getMap().getLocation("team-spawn-" + teams.indexOf(team));
+        return arena.getMap().getLocation("team-spawn-" + teams.indexOf(team)).clone();
     }
 
     public void create() {
@@ -96,7 +96,7 @@ public class ArenaTeamComponent extends ArenaComponent{
             }
 
             team.add(account);
-            account.sendMessage(ChatColor.YELLOW + "You are in team " + team.getDisplayName() + ChatColor.YELLOW + "!");
+            account.sendMessage(ChatColor.WHITE + "You are in team " + team.getBoldDisplayName() + ChatColor.YELLOW + "!");
         });
     }
 

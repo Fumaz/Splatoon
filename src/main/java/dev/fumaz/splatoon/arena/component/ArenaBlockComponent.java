@@ -49,8 +49,12 @@ public class ArenaBlockComponent extends ArenaComponent {
                 return;
             }
 
-            player.damage(damage);
+            if (arena.getTeams().getTeamSpawnLocation(arena.getTeams().getTeam(target)).distanceSquared(player.getLocation()) <= 5 * 5) {
+                return;
+            }
+
             player.setKiller(account.getPlayer());
+            player.damage(damage);
         });
     }
 

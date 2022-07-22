@@ -1,5 +1,9 @@
 package dev.fumaz.splatoon.arena.component;
 
+import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.ProtocolManager;
+import com.comphenix.protocol.events.PacketContainer;
 import dev.fumaz.commons.bukkit.interfaces.FListener;
 import dev.fumaz.splatoon.Splatoon;
 import dev.fumaz.splatoon.account.Account;
@@ -13,20 +17,16 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Squid;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
-import org.checkerframework.checker.units.qual.A;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Collections;
 
 public class ArenaListenerComponent extends ArenaComponent implements FListener {
 
@@ -265,6 +265,16 @@ public class ArenaListenerComponent extends ArenaComponent implements FListener 
         squid.setCustomNameVisible(true);
         squid.setSilent(true);
         squid.setCollidable(false);
+
+        try {
+            ProtocolManager manager = ProtocolLibrary.getProtocolManager();
+            PacketContainer packet = manager.createPacket(PacketType.Play.Server.ENTITY_DESTROY);
+            packet.getIntLists().write(0, Collections.singletonList(squid.getEntityId()));
+
+            manager.sendServerPacket(account.getPlayer(), packet);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         account.setSquid(squid);
 

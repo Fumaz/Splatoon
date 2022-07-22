@@ -199,6 +199,10 @@ public class Account {
     }
 
     public void rechargeInk(int amount) {
+        if (ink >= 100) {
+            return;
+        }
+
         ink += amount;
     }
 

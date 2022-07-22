@@ -96,10 +96,6 @@ public class Roller extends Weapon {
             return;
         }
 
-        if (!account.hasInk(getAbilityInk())) {
-            return;
-        }
-
         if (!account.isCanMove() || account.isHidden()) {
             return;
         }
@@ -108,8 +104,13 @@ public class Roller extends Weapon {
             return;
         }
 
+        if (!account.hasInk(getAbilityInk())) {
+            account.getPlayer().sendTitle(ChatColor.RED + "" + ChatColor.BOLD + "NO INK!", ChatColor.WHITE + "Refill it using squid mode!", 0, 20, 0);
+            return;
+        }
+
         account.useInk(getAbilityInk());
-        account.getArena().getBlocks().splat(account, account.getPlayer().getLocation(), 3, 100);
+        account.getArena().getBlocks().splat(account, account.getPlayer().getLocation(), 3, 5);
 
         if (ticks % 25 == 0) {
             account.getArena().getAccounts().forEach(a -> a.getPlayer().playSound(account.getPlayer().getLocation(), Sound.ENTITY_SLIME_SQUISH, 1f, 1f));

@@ -148,7 +148,7 @@ public class Charger extends Weapon {
         }
 
         ArenaInfo info = projectiles.remove(arrow);
-        float power = info.force * 20;
+        float power = info.force * 10;
 
         arrow.remove();
 
@@ -157,7 +157,7 @@ public class Charger extends Weapon {
 
     @Override
     protected void onUltimate(Account account, PlayerInteractEvent event) {
-        AtomicInteger arrows = new AtomicInteger(100);
+        AtomicInteger arrows = new AtomicInteger(50);
         Scheduler.of(plugin).runTaskTimer(task -> {
             if (arrows.decrementAndGet() < 0) {
                 task.cancel();
@@ -167,7 +167,7 @@ public class Charger extends Weapon {
             Arrow arrow = account.getPlayer().launchProjectile(Arrow.class);
             projectiles.put(arrow, new ArenaInfo(account.getArena(), account, 1));
             account.getPlayer().playSound(account.getPlayer().getLocation(), Sound.ENTITY_ARROW_SHOOT, 1, 1);
-        }, 0, 1);
+        }, 0, 2);
     }
 
     private static class ArenaInfo {

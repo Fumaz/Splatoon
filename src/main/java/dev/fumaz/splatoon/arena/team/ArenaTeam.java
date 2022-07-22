@@ -1,6 +1,7 @@
 package dev.fumaz.splatoon.arena.team;
 
 import dev.fumaz.splatoon.account.Account;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -18,6 +19,10 @@ public class ArenaTeam {
 
     public String getDisplayName() {
         return color.getChatColor() + color.getName();
+    }
+
+    public String getBoldDisplayName() {
+        return color.getChatColor() + "" + ChatColor.BOLD + color.getName().toUpperCase();
     }
 
     public String getName() {
