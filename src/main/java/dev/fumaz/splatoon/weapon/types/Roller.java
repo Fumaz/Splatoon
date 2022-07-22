@@ -87,7 +87,7 @@ public class Roller extends Weapon {
 
     @Override
     protected void onUltimate(Account account, PlayerInteractEvent event) {
-        account.getArena().getBlocks().splat(account.getTeam(), account.getPlayer().getLocation(), 15, 100);
+        account.getArena().getBlocks().splat(account, account.getPlayer().getLocation(), 15, 100);
     }
 
     @Override
@@ -109,7 +109,7 @@ public class Roller extends Weapon {
         }
 
         account.useInk(getAbilityInk());
-        account.getArena().getBlocks().splat(account.getTeam(), account.getPlayer().getLocation(), 3, 100);
+        account.getArena().getBlocks().splat(account, account.getPlayer().getLocation(), 3, 100);
 
         if (ticks % 25 == 0) {
             account.getArena().getAccounts().forEach(a -> a.getPlayer().playSound(account.getPlayer().getLocation(), Sound.ENTITY_SLIME_SQUISH, 1f, 1f));

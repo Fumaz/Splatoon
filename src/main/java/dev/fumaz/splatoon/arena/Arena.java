@@ -14,6 +14,7 @@ import dev.fumaz.splatoon.arena.team.ArenaTeam;
 import dev.fumaz.splatoon.hotbar.HotbarItemCategory;
 import dev.fumaz.splatoon.lobby.LobbyManager;
 import dev.fumaz.splatoon.scoreboard.ScoreboardType;
+import dev.fumaz.splatoon.util.Prefixes;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Squid;
@@ -77,7 +78,7 @@ public class Arena {
         account.setScoreboardType(ScoreboardType.WAITING);
         plugin.getHotbarItemManager().getHotbarItems(HotbarItemCategory.WAITING, HotbarItemCategory.LEAVE).forEach(item -> item.give(account));
 
-        broadcast(ChatColor.LIGHT_PURPLE + account.getName() + ChatColor.YELLOW + " joined the game! (" + ChatColor.LIGHT_PURPLE + getPlayers().size() + ChatColor.YELLOW + "/" + ChatColor.LIGHT_PURPLE + "8" + ChatColor.YELLOW + ")");
+        broadcast(Prefixes.JOIN + " " + ChatColor.GREEN + account.getDisplayName() + ChatColor.WHITE + " joined the game! (" + ChatColor.GREEN + players.size() + ChatColor.WHITE + "/" + ChatColor.GREEN + "8" + ChatColor.WHITE + ")");
     }
 
     public void leave(Account account) {
@@ -94,12 +95,12 @@ public class Arena {
         }
 
         if (state == ArenaState.WAITING) {
-            broadcast(ChatColor.LIGHT_PURPLE + account.getName() + ChatColor.YELLOW + " left the game! (" + ChatColor.LIGHT_PURPLE + getPlayers().size() + ChatColor.YELLOW + "/" + ChatColor.LIGHT_PURPLE + "8" + ChatColor.YELLOW + ")");
+            broadcast(Prefixes.JOIN + " " + ChatColor.GREEN + account.getDisplayName() + ChatColor.WHITE + " left the game! (" + ChatColor.GREEN + players.size() + ChatColor.WHITE + "/" + ChatColor.GREEN + "8" + ChatColor.WHITE + ")");
             return;
         }
 
         if (state == ArenaState.PLAYING) {
-            broadcast(ChatColor.LIGHT_PURPLE + account.getName() + ChatColor.YELLOW + " left the game!");
+            broadcast(Prefixes.JOIN + " " + ChatColor.GREEN + account.getDisplayName() + ChatColor.WHITE + " left the game!");
         }
     }
 
@@ -110,8 +111,14 @@ public class Arena {
         squid.setCustomName(account.getDisplayName());
         squid.setCustomNameVisible(true);
 
-        getBlocks().splat(getTeams().getOppositeTeam(account.getTeam()), account.getPlayer().getLocation(), 5, 0);
         account.sendTitle(ChatColor.RED + "" + ChatColor.BOLD + "YOU GOT SPLATTED!", null);
+
+        if (account.getPlayer().getKiller() == null) {
+            broadcast(Prefixes.DEATH + " " + ChatColor.GREEN + account.getDisplayName() + ChatColor.WHITE + " has been splatted!");
+        } else {
+            broadcast(Prefixes.DEATH + " " + ChatColor.GREEN + account.getDisplayName() + ChatColor.WHITE + " has been splatted by " + ChatColor.GREEN + account.getPlayer().getKiller().getDisplayName() + ChatColor.WHITE + "!");
+            getBlocks().splat(plugin.getAccountManager().getAccount(account.getPlayer().getKiller()), account.getPlayer().getLocation(), 5, 0);
+        }
 
         AtomicInteger seconds = new AtomicInteger(6);
         scheduler.runTaskTimer(task -> {
@@ -141,6 +148,8 @@ public class Arena {
         plugin.getHotbarItemManager().getHotbarItems(HotbarItemCategory.PLAYING).forEach(item -> item.give(account));
         bossBar.remove(account);
         bossBar.add(account);
+
+        account.getPlayer().setGlowing(true);
 
         Queue<String> messages = new LinkedList<>(Arrays.asList("READY", "SET", "SPLAT!"));
 
@@ -252,6 +261,7 @@ public class Arena {
                         account.sendTitle(team == winner ? (ChatColor.GOLD + "" + ChatColor.BOLD + "YOU WIN!") : (ChatColor.RED + "" + ChatColor.BOLD + "YOU LOSE!"), null);
                         account.getPlayer().playSound(account.getPlayer().getLocation(), team == winner ? Sound.ENTITY_PLAYER_LEVELUP : Sound.ENTITY_PLAYER_DEATH, 1f, 1f);
                         account.sendMessage(team == winner ? (ChatColor.GOLD + "" + ChatColor.BOLD + "YOU WIN!") : (ChatColor.RED + "" + ChatColor.BOLD + "YOU LOSE!"));
+                        account.sendMessage("");
                         account.sendMessage(team.getDisplayName() + ": " + ChatColor.LIGHT_PURPLE + percentages.get(team) + "%");
                         account.sendMessage(teams.getOppositeTeam(team).getDisplayName() + ": " + ChatColor.LIGHT_PURPLE + percentages.get(teams.getOppositeTeam(team)) + "%");
                     });
@@ -263,8 +273,8 @@ public class Arena {
                 return;
             }
 
-            broadcastActionBar(ChatColor.LIGHT_PURPLE + "CALCULATING...");
-            broadcastSound(Sound.BLOCK_NOTE_BLOCK_PLING);
+            broadcastActionBar(ChatColor.GREEN + "CALCULATING...");
+            broadcastSound(Sound.BLOCK_BEACON_ACTIVATE);
         }, 0, 20);
     }
 

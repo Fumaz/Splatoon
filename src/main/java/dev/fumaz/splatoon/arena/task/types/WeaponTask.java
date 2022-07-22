@@ -12,7 +12,13 @@ public class WeaponTask extends ArenaTask {
 
     @Override
     public void tick(int ticks) {
-        arena.getPlayers().forEach(account -> account.getWeapon().tick(account, ticks));
+        arena.getPlayers().forEach(account -> {
+            if (!account.isCanMove() || account.isHidden() || !arena.isAlive(account)) {
+                return;
+            }
+
+            account.getWeapon().tick(account, ticks);
+        });
     }
 
     @Override

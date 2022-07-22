@@ -6,15 +6,18 @@ import dev.fumaz.splatoon.Splatoon;
 import dev.fumaz.splatoon.account.Account;
 import dev.fumaz.splatoon.account.AccountManager;
 import dev.fumaz.splatoon.arena.ArenaManager;
-import org.bukkit.Bukkit;
+import dev.fumaz.splatoon.util.Prefixes;
+import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.concurrent.TimeUnit;
 
@@ -39,10 +42,18 @@ public class LobbyListener implements FListener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        Bukkit.getScheduler().runTaskLater(plugin, () -> {
-            Account account = accountManager.getAccount(event.getPlayer());
-            lobbyManager.send(account);
-        }, 5L);
+        Account account = accountManager.getAccount(event.getPlayer());
+        lobbyManager.send(account);
+
+        event.joinMessage(null);
+        lobbyManager.getAccounts().forEach(a -> {
+            a.sendMessage(Prefixes.LOBBY + " " + ChatColor.GREEN + event.getPlayer().getDisplayName() + ChatColor.WHITE + " joined the lobby!");
+        });
+
+        event.getPlayer().setPlayerListHeaderFooter(
+                "\n" + ChatColor.DARK_GREEN + ChatColor.BOLD + "⭐ SPLATOON ⭐" + "\n",
+                "\n" + ChatColor.GREEN + "fumaz.dev" + "\n"
+        );
     }
 
     @EventHandler
@@ -81,6 +92,29 @@ public class LobbyListener implements FListener {
     @EventHandler
     public void onEntityDamage(EntityDamageEvent event) {
         if (event.getCause() == EntityDamageEvent.DamageCause.CUSTOM) {
+            return;
+        }
+
+        event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onLeave(PlayerQuitEvent event) {
+        event.quitMessage(null);
+    }
+
+    @EventHandler
+    public void onBlockBreak(BlockBreakEvent event) {
+        if (event.getPlayer().getGameMode() == GameMode.CREATIVE) {
+            return;
+        }
+
+        event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onBlockPlace(BlockPlaceEvent event) {
+        if (event.getPlayer().getGameMode() == GameMode.CREATIVE) {
             return;
         }
 

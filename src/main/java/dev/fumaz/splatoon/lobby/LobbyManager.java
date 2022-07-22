@@ -8,6 +8,9 @@ import dev.fumaz.splatoon.scoreboard.ScoreboardType;
 import org.bukkit.*;
 import org.bukkit.configuration.file.YamlConfiguration;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class LobbyManager {
 
 
@@ -70,6 +73,13 @@ public class LobbyManager {
         account.clear();
 
         account.getPlayer().teleport(getSpawn());
+    }
+
+    public List<Account> getAccounts() {
+        return plugin.getAccountManager().getAccounts()
+                .stream()
+                .filter(account -> account.getWorld().equals(getWorld()))
+                .collect(Collectors.toList());
     }
 
 }

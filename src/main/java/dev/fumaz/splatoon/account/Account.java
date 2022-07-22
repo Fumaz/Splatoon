@@ -7,6 +7,7 @@ import dev.fumaz.splatoon.scoreboard.ScoreboardType;
 import dev.fumaz.splatoon.scoreboard.SplatoonScoreboard;
 import dev.fumaz.splatoon.weapon.Weapon;
 import dev.fumaz.splatoon.weapon.types.Shooter;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -64,6 +65,7 @@ public class Account {
             if (scoreboardTeam == null) {
                 scoreboardTeam = scoreboard.registerNewTeam(team != null ? team.getName() : getName());
                 scoreboardTeam.setPrefix(team != null ? team.getColor().getChatColor().toString() : ChatColor.WHITE.toString());
+                scoreboardTeam.setColor(team != null ? team.getColor().getChatColor() : ChatColor.WHITE);
             }
 
             if (scoreboardTeam.hasPlayer(player)) {
@@ -87,6 +89,7 @@ public class Account {
         show();
         getPlayer().setHealth(getPlayer().getMaxHealth());
         getPlayer().setFoodLevel(20);
+        getPlayer().setGlowing(false);
 
         updateName();
     }

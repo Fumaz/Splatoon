@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableList;
 import dev.fumaz.splatoon.Splatoon;
 import dev.fumaz.splatoon.account.Account;
 import dev.fumaz.splatoon.arena.Arena;
-import dev.fumaz.splatoon.arena.team.ArenaTeam;
 import dev.fumaz.splatoon.weapon.Weapon;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -19,7 +18,10 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class Shooter extends Weapon {
@@ -99,7 +101,7 @@ public class Shooter extends Weapon {
         Player player = account.getPlayer();
         Snowball snowball = player.launchProjectile(Snowball.class);
 
-        projectiles.put(snowball, new ArenaInfo(account.getArena(), account.getTeam()));
+        projectiles.put(snowball, new ArenaInfo(account.getArena(), account));
         player.playSound(player.getLocation(), Sound.ENTITY_SNOWBALL_THROW, 1f, 1f);
     }
 
@@ -111,7 +113,7 @@ public class Shooter extends Weapon {
         TNTPrimed tnt = player.getWorld().spawn(player.getEyeLocation(), TNTPrimed.class);
         tnt.setVelocity(velocity);
 
-        bombs.put(tnt, new ArenaInfo(account.getArena(), account.getTeam()));
+        bombs.put(tnt, new ArenaInfo(account.getArena(), account));
     }
 
     @EventHandler
@@ -126,7 +128,7 @@ public class Shooter extends Weapon {
             return;
         }
 
-        info.arena.getBlocks().splat(info.team, snowball.getLocation(), 2, 5);
+        info.arena.getBlocks().splat(info.account, snowball.getLocation(), 2, 5);
         event.setCancelled(true);
     }
 
@@ -142,17 +144,17 @@ public class Shooter extends Weapon {
             return;
         }
 
-        info.arena.getBlocks().splat(info.team, tnt.getLocation(), 5, 15);
+        info.arena.getBlocks().splat(info.account, tnt.getLocation(), 5, 15);
         event.setCancelled(true);
     }
 
     private static class ArenaInfo {
         private final Arena arena;
-        private final ArenaTeam team;
+        private final Account account;
 
-        private ArenaInfo(Arena arena, ArenaTeam team) {
+        private ArenaInfo(Arena arena, Account account) {
             this.arena = arena;
-            this.team = team;
+            this.account = account;
         }
     }
 }

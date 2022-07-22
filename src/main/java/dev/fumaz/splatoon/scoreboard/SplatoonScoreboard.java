@@ -12,7 +12,7 @@ public class SplatoonScoreboard extends FScoreboard {
     public SplatoonScoreboard(Account account) {
         this.account = account;
 
-        setTitle(ChatColor.DARK_PURPLE + "" + ChatColor.BOLD + "SPLATOON");
+        setTitle(ChatColor.DARK_GREEN + "" + ChatColor.BOLD + "SPLATOON");
         setType(ScoreboardType.LOBBY);
 
         show(account.getPlayer());

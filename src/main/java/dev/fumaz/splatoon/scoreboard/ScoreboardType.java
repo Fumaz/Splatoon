@@ -22,7 +22,7 @@ public enum ScoreboardType {
             scoreboard.addEntry(new DynamicScoreboardEntry(() -> ChatColor.WHITE + "Weapon: "+ ChatColor.YELLOW + account.getWeapon().getName(), true));
             scoreboard.addEntry(new DynamicScoreboardEntry(() -> ChatColor.WHITE + "Gear: "+ ChatColor.YELLOW + "None", true)); // TODO
             scoreboard.addEntry(new BlankScoreboardEntry());
-            scoreboard.addEntry(new StaticScoreboardEntry(ChatColor.LIGHT_PURPLE + "fumaz.dev", true));
+            scoreboard.addEntry(new StaticScoreboardEntry(ChatColor.GREEN + "fumaz.dev", true));
         }
     },
     WAITING {
@@ -32,15 +32,14 @@ public enum ScoreboardType {
             Arena arena = account.getArena();
 
             scoreboard.addEntry(new BlankScoreboardEntry());
-            scoreboard.addEntry(new StaticScoreboardEntry(ChatColor.WHITE + "Level: " + ChatColor.YELLOW + "0", true));
-            scoreboard.addEntry(new StaticScoreboardEntry(ChatColor.WHITE + "Coins: " + ChatColor.YELLOW + "0", true)); // TODO
-            scoreboard.addEntry(new BlankScoreboardEntry());
             scoreboard.addEntry(new DynamicScoreboardEntry(() -> ChatColor.WHITE + "Starts in: " + ChatColor.YELLOW + arena.getTime().getWaitingTime() + "s", true));
             scoreboard.addEntry(new DynamicScoreboardEntry(() -> ChatColor.WHITE + "Players: " + ChatColor.YELLOW + arena.getPlayers().size(), true));
             scoreboard.addEntry(new BlankScoreboardEntry());
+            scoreboard.addEntry(new DynamicScoreboardEntry(() -> ChatColor.WHITE + "Weapon: " + ChatColor.YELLOW + account.getWeapon().getName(), true));
+            scoreboard.addEntry(new BlankScoreboardEntry());
             scoreboard.addEntry(new DynamicScoreboardEntry(() -> ChatColor.WHITE + "Map: " + ChatColor.YELLOW + arena.getMap().getName(), true));
             scoreboard.addEntry(new BlankScoreboardEntry());
-            scoreboard.addEntry(new StaticScoreboardEntry(ChatColor.LIGHT_PURPLE + "fumaz.dev", true));
+            scoreboard.addEntry(new StaticScoreboardEntry(ChatColor.GREEN + "fumaz.dev", true));
         }
     },
     PLAYING {
@@ -57,7 +56,7 @@ public enum ScoreboardType {
             scoreboard.addEntry(new DynamicScoreboardEntry(() -> ChatColor.WHITE + "Team:", () -> ChatColor.YELLOW + team.getName()));
             scoreboard.addEntry(new DynamicScoreboardEntry(() -> ChatColor.WHITE + "Map:", () -> ChatColor.YELLOW + arena.getMap().getName()));
             scoreboard.addEntry(new BlankScoreboardEntry());
-            scoreboard.addEntry(new StaticScoreboardEntry(ChatColor.LIGHT_PURPLE + "fumaz.dev", true));
+            scoreboard.addEntry(new StaticScoreboardEntry(ChatColor.GREEN + "fumaz.dev", true));
         }
     },
     SPECTATING {
@@ -72,7 +71,7 @@ public enum ScoreboardType {
             scoreboard.addEntry(new BlankScoreboardEntry());
             scoreboard.addEntry(new DynamicScoreboardEntry(() -> ChatColor.WHITE + "Map: " + ChatColor.YELLOW + arena.getMap().getName(), true));
             scoreboard.addEntry(new BlankScoreboardEntry());
-            scoreboard.addEntry(new StaticScoreboardEntry(ChatColor.LIGHT_PURPLE + "fumaz.dev", true));
+            scoreboard.addEntry(new StaticScoreboardEntry(ChatColor.GREEN + "fumaz.dev", true));
         }
     };
 

@@ -13,7 +13,7 @@ import org.bukkit.entity.Player;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ArenaBlockComponent extends ArenaComponent{
+public class ArenaBlockComponent extends ArenaComponent {
 
     private final AccountManager accountManager;
     private final Map<Block, ArenaTeam> blocks;
@@ -34,22 +34,23 @@ public class ArenaBlockComponent extends ArenaComponent{
         blocks.put(block, team);
     }
 
-    public void splat(ArenaTeam team, Location location, int radius, double damage) {
-        Geometry.circle(radius, vector -> {
-            for (int y = -radius; y <= radius; ++y) {
-                Block block = location.clone().add(vector).add(0, y, 0).getBlock();
-                add(team, block);
-            }
+    public void splat(Account account, Location location, int radius, double damage) {
+        ArenaTeam team = arena.getTeams().getTeam(account);
+
+        Geometry.sphere(radius, vector -> {
+            Block block = location.clone().add(vector).getBlock();
+            add(team, block);
         });
 
         location.getNearbyEntitiesByType(Player.class, radius).forEach(player -> {
-            Account account = accountManager.getAccount(player);
+            Account target = accountManager.getAccount(player);
 
-            if (team.contains(account) || account.isHidden()) {
+            if (team.contains(target) || target.isHidden()) {
                 return;
             }
 
             player.damage(damage);
+            player.setKiller(account.getPlayer());
         });
     }
 

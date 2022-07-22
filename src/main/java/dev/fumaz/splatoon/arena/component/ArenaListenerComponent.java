@@ -53,6 +53,10 @@ public class ArenaListenerComponent extends ArenaComponent implements FListener 
             return;
         }
 
+        if (!account.isCanMove() || account.isHidden()) {
+            return;
+        }
+
         if (!player.getInventory().getItemInMainHand().isSimilar(account.getWeapon().getIcon())) {
             return;
         }
@@ -74,6 +78,10 @@ public class ArenaListenerComponent extends ArenaComponent implements FListener 
         Account account = accountManager.getAccount(player);
 
         if (!arena.isAlive(account)) {
+            return;
+        }
+
+        if (!account.isCanMove() || account.isHidden()) {
             return;
         }
 

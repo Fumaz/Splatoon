@@ -6,9 +6,7 @@ import dev.fumaz.commons.bukkit.misc.Scheduler;
 import dev.fumaz.splatoon.Splatoon;
 import dev.fumaz.splatoon.account.Account;
 import dev.fumaz.splatoon.arena.Arena;
-import dev.fumaz.splatoon.arena.team.ArenaTeam;
 import dev.fumaz.splatoon.weapon.Weapon;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -136,7 +134,7 @@ public class Charger extends Weapon {
         }
 
         account.useInk(getAbilityInk());
-        projectiles.put(arrow, new ArenaInfo(account.getArena(), account.getTeam(), event.getForce()));
+        projectiles.put(arrow, new ArenaInfo(account.getArena(), account, event.getForce()));
     }
 
     @EventHandler
@@ -154,7 +152,7 @@ public class Charger extends Weapon {
 
         arrow.remove();
 
-        info.arena.getBlocks().splat(info.team, arrow.getLocation(), 3, power);
+        info.arena.getBlocks().splat(info.account, arrow.getLocation(), 3, power);
     }
 
     @Override
@@ -167,19 +165,19 @@ public class Charger extends Weapon {
             }
 
             Arrow arrow = account.getPlayer().launchProjectile(Arrow.class);
-            projectiles.put(arrow, new ArenaInfo(account.getArena(), account.getTeam(), 1));
+            projectiles.put(arrow, new ArenaInfo(account.getArena(), account, 1));
             account.getPlayer().playSound(account.getPlayer().getLocation(), Sound.ENTITY_ARROW_SHOOT, 1, 1);
         }, 0, 1);
     }
 
     private static class ArenaInfo {
         private final Arena arena;
-        private final ArenaTeam team;
+        private final Account account;
         private final float force;
 
-        private ArenaInfo(Arena arena, ArenaTeam team, float force) {
+        private ArenaInfo(Arena arena, Account account, float force) {
             this.arena = arena;
-            this.team = team;
+            this.account = account;
             this.force = force;
         }
     }

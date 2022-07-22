@@ -19,6 +19,14 @@ public class VisibilityManager {
     private void update() {
         accountManager.getAccounts().forEach(victim -> {
             accountManager.getAccounts().forEach(target -> {
+                if (victim.getArena() != target.getArena()) {
+                    if (target.getPlayer().canSee(victim.getPlayer())) {
+                        target.getPlayer().hidePlayer(victim.getPlayer());
+                    }
+
+                    return;
+                }
+
                 boolean hidden = victim.isHidden();
 
                 if (hidden) {

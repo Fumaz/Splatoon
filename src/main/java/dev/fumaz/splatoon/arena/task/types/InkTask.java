@@ -23,7 +23,7 @@ public class InkTask extends ArenaTask {
                 return;
             }
 
-            account.rechargeInk(1);
+            account.rechargeInk(3);
             account.getPlayer().setExp(Math.min(1f, account.getInk() / 100f));
         });
     }

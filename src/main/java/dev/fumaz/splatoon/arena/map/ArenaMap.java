@@ -23,6 +23,7 @@ public class ArenaMap {
         world.setGameRule(GameRule.ANNOUNCE_ADVANCEMENTS, false);
         world.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, false);
         world.setFullTime(1000);
+        world.setAutoSave(false);
     }
 
     public String getName() {
