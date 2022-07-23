@@ -26,7 +26,7 @@ public class ArenaBlockComponent extends ArenaComponent {
     }
 
     public void add(ArenaTeam team, Block block) {
-        if (block.getType() == Material.BARRIER || block.isEmpty()) {
+        if (block.getType() == Material.BARRIER || block.isLiquid() || block.isEmpty() || block.getType() == Material.IRON_BARS) {
             return;
         }
 

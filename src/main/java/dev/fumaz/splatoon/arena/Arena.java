@@ -356,7 +356,7 @@ public class Arena {
 
                 Block block = location.getBlock();
 
-                if (block.isEmpty()) {
+                if (block.isEmpty() || block.isLiquid() || block.getType() == Material.BARRIER || block.getType() == Material.IRON_BARS) {
                     continue;
                 }
 

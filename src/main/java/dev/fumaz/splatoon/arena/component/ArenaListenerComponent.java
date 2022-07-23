@@ -304,6 +304,26 @@ public class ArenaListenerComponent extends ArenaComponent implements FListener 
         squid.teleport(player.getLocation());
     }
 
+    @EventHandler
+    public void onWater(PlayerMoveEvent event) {
+        Player player = event.getPlayer();
+        Account account = accountManager.getAccount(player);
+
+        if (!arena.isAlive(account)) {
+            return;
+        }
+
+        if (arena.getState() != ArenaState.PLAYING) {
+            return;
+        }
+
+        if (!player.isInWater()) {
+            return;
+        }
+
+        arena.kill(account);
+    }
+
     private boolean isNearTeamBlock(Account account) {
         ArenaBlockComponent blocks = arena.getBlocks();
 
