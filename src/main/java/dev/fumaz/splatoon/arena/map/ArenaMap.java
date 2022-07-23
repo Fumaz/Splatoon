@@ -2,9 +2,11 @@ package dev.fumaz.splatoon.arena.map;
 
 import org.bukkit.GameRule;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 
 import java.util.Map;
+import java.util.Set;
 
 public class ArenaMap {
 
@@ -12,12 +14,16 @@ public class ArenaMap {
     private final World world;
     private final Map<String, Location> locations;
     private final int radius;
+    private final int minY;
+    private final Set<Material> unpaintableMaterials;
 
-    public ArenaMap(String name, World world, Map<String, Location> locations, int radius) {
+    public ArenaMap(String name, World world, Map<String, Location> locations, Set<Material> unpaintableMaterials, int radius, int minY) {
         this.name = name;
         this.world = world;
         this.locations = locations;
+        this.unpaintableMaterials = unpaintableMaterials;
         this.radius = radius;
+        this.minY = minY;
 
         world.setGameRule(GameRule.DO_MOB_SPAWNING, false);
         world.setGameRule(GameRule.ANNOUNCE_ADVANCEMENTS, false);
@@ -44,6 +50,14 @@ public class ArenaMap {
 
     public Location getLocation(String name) {
         return locations.get(name).clone();
+    }
+
+    public boolean isUnpaintable(Material material) {
+        return unpaintableMaterials.contains(material);
+    }
+
+    public int getMinY() {
+        return minY;
     }
 
 }

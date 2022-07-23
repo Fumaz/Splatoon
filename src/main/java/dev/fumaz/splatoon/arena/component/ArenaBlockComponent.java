@@ -26,7 +26,11 @@ public class ArenaBlockComponent extends ArenaComponent {
     }
 
     public void add(ArenaTeam team, Block block) {
-        if (block.getType() == Material.BARRIER || block.isLiquid() || block.isEmpty() || block.getType() == Material.IRON_BARS) {
+        if (block.getType() == Material.BARRIER || block.isLiquid() || block.isEmpty() || arena.getMap().isUnpaintable(block.getType())) {
+            return;
+        }
+
+        if (arena.getMap().getMinY() >= block.getY()) {
             return;
         }
 

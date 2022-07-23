@@ -53,7 +53,7 @@ public class ArenaMapLoader {
             locations.put(key, location);
         }
 
-        return new ArenaMap(configuration.getWorldName(), world, locations, configuration.getRadius());
+        return new ArenaMap(configuration.getWorldName(), world, locations, configuration.getUnpaintableMaterials(), configuration.getRadius(), configuration.getMinY());
     }
 
     private File getAvailableWorldFolder() {
@@ -85,6 +85,7 @@ public class ArenaMapLoader {
 
             String worldName = yaml.getString("world");
             int radius = yaml.getInt("radius");
+            int minY = yaml.getInt("minY", -100);
 
             Map<String, Location> locations = new HashMap<>();
 
@@ -93,7 +94,16 @@ public class ArenaMapLoader {
                 locations.put(key, locationsSection.getLocation(key));
             });
 
-            maps.add(new ArenaMapConfiguration(worldName, file, locations, radius));
+            Set<Material> unpaintableMaterials = new HashSet<>();
+
+            if (yaml.contains("unpaintable-materials")) {
+                ConfigurationSection unpaintableMaterialsSection = yaml.getConfigurationSection("unpaintable-materials");
+                unpaintableMaterialsSection.getKeys(false).forEach(key -> {
+                    unpaintableMaterials.add(Material.matchMaterial(key));
+                });
+            }
+
+            maps.add(new ArenaMapConfiguration(worldName, file, locations, unpaintableMaterials, radius, minY));
             logger.info("Loaded map " + worldName);
         }
 

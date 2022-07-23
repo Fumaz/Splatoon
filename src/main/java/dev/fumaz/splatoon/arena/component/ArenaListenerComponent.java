@@ -324,6 +324,26 @@ public class ArenaListenerComponent extends ArenaComponent implements FListener 
         arena.kill(account);
     }
 
+    @EventHandler
+    public void onMinY(PlayerMoveEvent event) {
+        Player player = event.getPlayer();
+        Account account = accountManager.getAccount(player);
+
+        if (!arena.isAlive(account)) {
+            return;
+        }
+
+        if (arena.getState() != ArenaState.PLAYING) {
+            return;
+        }
+
+        if (event.getTo().getY() > arena.getMap().getMinY()) {
+            return;
+        }
+
+        arena.kill(account);
+    }
+
     private boolean isNearTeamBlock(Account account) {
         ArenaBlockComponent blocks = arena.getBlocks();
 
