@@ -85,7 +85,7 @@ public class ArenaMapLoader {
 
             String worldName = yaml.getString("world");
             int radius = yaml.getInt("radius");
-            int minY = yaml.getInt("minY", -100);
+            int minY = yaml.getInt("min-y", -100);
 
             Map<String, Location> locations = new HashMap<>();
 
