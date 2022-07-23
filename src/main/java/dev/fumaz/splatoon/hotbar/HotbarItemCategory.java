@@ -5,5 +5,6 @@ public enum HotbarItemCategory {
     WAITING,
     PLAYING,
     SPECTATING,
-    LEAVE;
+    LEAVE,
+    MAPS;
 }

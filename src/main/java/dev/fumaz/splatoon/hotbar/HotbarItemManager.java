@@ -60,4 +60,8 @@ public class HotbarItemManager {
                 .collect(Collectors.toList());
     }
 
+    public void removeHotbarItem(HotbarItem item) {
+        items.remove(item);
+    }
+
 }

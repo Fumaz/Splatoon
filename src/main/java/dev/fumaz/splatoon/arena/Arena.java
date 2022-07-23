@@ -1,5 +1,6 @@
 package dev.fumaz.splatoon.arena;
 
+import dev.fumaz.commons.bukkit.item.ItemBuilder;
 import dev.fumaz.commons.bukkit.math.Geometry;
 import dev.fumaz.commons.bukkit.misc.Scheduler;
 import dev.fumaz.commons.io.Files;
@@ -11,13 +12,16 @@ import dev.fumaz.splatoon.arena.state.ArenaState;
 import dev.fumaz.splatoon.arena.task.types.InkTask;
 import dev.fumaz.splatoon.arena.task.types.WeaponTask;
 import dev.fumaz.splatoon.arena.team.ArenaTeam;
+import dev.fumaz.splatoon.hotbar.HotbarItem;
 import dev.fumaz.splatoon.hotbar.HotbarItemCategory;
 import dev.fumaz.splatoon.lobby.LobbyManager;
 import dev.fumaz.splatoon.scoreboard.ScoreboardType;
 import dev.fumaz.splatoon.util.Prefixes;
 import org.bukkit.*;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Squid;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.MapMeta;
+import org.bukkit.map.MapView;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -40,6 +44,8 @@ public class Arena {
     private final ArenaTimeComponent time;
     private final ArenaBossBarComponent bossBar;
 
+    private final HotbarItem mapItem;
+
     private ArenaState state;
 
     public Arena(Splatoon plugin, ArenaManager arenaManager, ArenaMap map) {
@@ -48,6 +54,26 @@ public class Arena {
         this.arenaManager = arenaManager;
         this.lobbyManager = plugin.getLobbyManager();
         this.map = map;
+
+        MapView view = Bukkit.createMap(map.getWorld());
+        view.setCenterX(map.getLocation("center").getBlockX());
+        view.setCenterZ(map.getLocation("center").getBlockZ());
+        view.setTrackingPosition(true);
+        view.setUnlimitedTracking(false);
+        view.setScale(MapView.Scale.CLOSEST);
+        // view.setLocked(true);
+
+        ItemStack viewItem = ItemBuilder.of(Material.FILLED_MAP)
+                .displayName(ChatColor.GOLD + "" + ChatColor.BOLD + "MAP")
+                .consumeCustomMeta(MapMeta.class, meta -> {
+                    meta.setMapView(view);
+                    meta.setScaling(false);
+                })
+                .build();
+
+        this.mapItem = new HotbarItem(viewItem, 8, (account, event) -> {});
+        plugin.getHotbarItemManager().addHotbarItem(mapItem, HotbarItemCategory.MAPS);
+
 
         this.state = ArenaState.WAITING;
 
@@ -67,6 +93,7 @@ public class Arena {
         if (state != ArenaState.WAITING) {
             account.sendMessage(ChatColor.RED + "You are now spectating this arena!");
             spectators.add(account);
+            mapItem.give(account, 0);
             return;
         }
 
@@ -106,6 +133,7 @@ public class Arena {
 
     public void kill(Account account) {
         spectators.add(account);
+        mapItem.give(account, 0);
 
         account.sendTitle(ChatColor.RED + "" + ChatColor.BOLD + "YOU GOT SPLATTED!", null);
 
@@ -138,6 +166,7 @@ public class Arena {
         account.getPlayer().setGameMode(GameMode.ADVENTURE);
         account.getWeapon().apply(account);
         plugin.getHotbarItemManager().getHotbarItems(HotbarItemCategory.PLAYING).forEach(item -> item.give(account));
+        mapItem.give(account);
         bossBar.remove(account);
         bossBar.add(account);
 
@@ -214,6 +243,8 @@ public class Arena {
         tasks.stopTasks();
         arenaManager.remove(this);
         getAccounts().forEach(this::leave);
+
+        plugin.getHotbarItemManager().removeHotbarItem(mapItem);
 
         state = ArenaState.ENDED;
 

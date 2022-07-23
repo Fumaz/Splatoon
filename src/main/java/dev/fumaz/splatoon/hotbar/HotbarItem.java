@@ -31,4 +31,8 @@ public class HotbarItem {
         account.getInventory().setItem(slot, item);
     }
 
+    public void give(Account account, int slot) {
+        account.getInventory().setItem(slot, item);
+    }
+
 }
