@@ -1,6 +1,7 @@
 package dev.fumaz.splatoon.weapon.types;
 
 import com.google.common.collect.ImmutableList;
+import dev.fumaz.commons.bukkit.misc.Scheduler;
 import dev.fumaz.splatoon.Splatoon;
 import dev.fumaz.splatoon.account.Account;
 import dev.fumaz.splatoon.arena.Arena;
@@ -23,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Shooter extends Weapon {
 
@@ -108,12 +110,21 @@ public class Shooter extends Weapon {
     @Override
     protected void onUltimate(Account account, PlayerInteractEvent event) {
         Player player = account.getPlayer();
-        Vector velocity = player.getEyeLocation().getDirection().multiply(1);
+        AtomicInteger count = new AtomicInteger(10);
 
-        TNTPrimed tnt = player.getWorld().spawn(player.getEyeLocation(), TNTPrimed.class);
-        tnt.setVelocity(velocity);
+        Scheduler.of(plugin).runTaskTimer(task -> {
+            if (count.decrementAndGet() < 0) {
+                task.cancel();
+                return;
+            }
 
-        bombs.put(tnt, new ArenaInfo(account.getArena(), account));
+            Vector velocity = player.getEyeLocation().getDirection().multiply(1);
+
+            TNTPrimed tnt = player.getWorld().spawn(player.getEyeLocation(), TNTPrimed.class);
+            tnt.setVelocity(velocity);
+
+            bombs.put(tnt, new ArenaInfo(account.getArena(), account));
+        }, 0, 20);
     }
 
     @EventHandler

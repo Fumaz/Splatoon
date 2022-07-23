@@ -5,6 +5,7 @@ import dev.fumaz.splatoon.account.Account;
 import dev.fumaz.splatoon.account.AccountManager;
 import dev.fumaz.splatoon.arena.Arena;
 import dev.fumaz.splatoon.arena.team.ArenaTeam;
+import org.bukkit.EntityEffect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -49,7 +50,7 @@ public class ArenaBlockComponent extends ArenaComponent {
         location.getNearbyEntitiesByType(Player.class, radius).forEach(player -> {
             Account target = accountManager.getAccount(player);
 
-            if (team.contains(target) || target.isHidden()) {
+            if (team.contains(target) || (target.isHidden() && !target.isSquid())) {
                 return;
             }
 
@@ -59,6 +60,10 @@ public class ArenaBlockComponent extends ArenaComponent {
 
             player.setKiller(account.getPlayer());
             player.damage(damage);
+
+            if (target.isSquid()) {
+                target.getSquid().playEffect(EntityEffect.HURT);
+            }
         });
     }
 

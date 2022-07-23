@@ -58,7 +58,7 @@ public class Arena {
         MapView view = Bukkit.createMap(map.getWorld());
         view.setCenterX(map.getLocation("center").getBlockX());
         view.setCenterZ(map.getLocation("center").getBlockZ());
-        view.setTrackingPosition(true);
+        view.setTrackingPosition(false);
         view.setUnlimitedTracking(false);
         view.setScale(MapView.Scale.CLOSEST);
         // view.setLocked(true);
@@ -135,6 +135,7 @@ public class Arena {
         spectators.add(account);
         mapItem.give(account, 0);
 
+        account.removeSquid();
         account.sendTitle(ChatColor.RED + "" + ChatColor.BOLD + "YOU GOT SPLATTED!", null);
 
         if (account.getPlayer().getKiller() == null) {

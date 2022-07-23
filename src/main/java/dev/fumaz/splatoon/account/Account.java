@@ -85,7 +85,7 @@ public class Account {
         getPlayer().setInvisible(false);
         getPlayer().setCollidable(true);
         setInk(100);
-        setSquid(null);
+        removeSquid();
         show();
         getPlayer().setHealth(getPlayer().getMaxHealth());
         getPlayer().setFoodLevel(20);

@@ -21,12 +21,23 @@ public class ArenaManager {
         this.mapLoader = mapLoader;
         this.arenas = new HashSet<>();
 
-        Scheduler.of(plugin).runTaskLater(this::createArena, 20L);
+        Scheduler.of(plugin).runTaskLater(() -> this.createArena(), 20L);
+    }
+
+    public Set<Arena> getArenas() {
+        return arenas;
     }
 
     public Arena createArena() {
         ArenaMap map = mapLoader.createMap();
         Arena arena = new Arena(plugin, this, map);
+        arenas.add(arena);
+        return arena;
+    }
+
+    public Arena createArena(String map) {
+        ArenaMap arenaMap = mapLoader.createMap(map);
+        Arena arena = new Arena(plugin, this, arenaMap);
         arenas.add(arena);
         return arena;
     }

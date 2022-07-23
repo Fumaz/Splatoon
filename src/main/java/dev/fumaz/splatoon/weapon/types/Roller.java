@@ -87,7 +87,7 @@ public class Roller extends Weapon {
 
     @Override
     protected void onUltimate(Account account, PlayerInteractEvent event) {
-        account.getArena().getBlocks().splat(account, account.getPlayer().getLocation(), 15, 100);
+        account.getArena().getBlocks().splat(account, account.getPlayer().getLocation(), 10, 100);
     }
 
     @Override

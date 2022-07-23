@@ -11,10 +11,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Logger;
 
 public class ArenaMapLoader {
@@ -36,6 +33,32 @@ public class ArenaMapLoader {
 
     public ArenaMap createMap() {
         ArenaMapConfiguration configuration = Randoms.choice(maps);
+        File directory = getAvailableWorldFolder();
+
+        Files.copyFileOrFolder(configuration.getDirectory(), directory);
+
+        World world = new WorldCreator(directory.getName())
+                .generator(new EmptyChunkGenerator())
+                .type(WorldType.FLAT)
+                .createWorld();
+
+        Map<String, Location> locations = new HashMap<>();
+        for (String key : configuration.getLocations().keySet()) {
+            Location location = configuration.getLocations().get(key).clone();
+            location.setWorld(world);
+
+            locations.put(key, location);
+        }
+
+        return new ArenaMap(configuration.getWorldName(), world, locations, configuration.getUnpaintableMaterials(), configuration.getRadius(), configuration.getMinY());
+    }
+
+    public ArenaMap createMap(String map) {
+        ArenaMapConfiguration configuration = maps.stream()
+                .filter(m -> m.getWorldName().equalsIgnoreCase(map.replace("_", " ")))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Map not found: " + map));
+
         File directory = getAvailableWorldFolder();
 
         Files.copyFileOrFolder(configuration.getDirectory(), directory);
@@ -97,10 +120,8 @@ public class ArenaMapLoader {
             Set<Material> unpaintableMaterials = new HashSet<>();
 
             if (yaml.contains("unpaintable-materials")) {
-                ConfigurationSection unpaintableMaterialsSection = yaml.getConfigurationSection("unpaintable-materials");
-                unpaintableMaterialsSection.getKeys(false).forEach(key -> {
-                    unpaintableMaterials.add(Material.matchMaterial(key));
-                });
+                List<String> unpaintableMaterialsSection = yaml.getStringList("unpaintable-materials");
+                unpaintableMaterialsSection.forEach(key -> unpaintableMaterials.add(Material.matchMaterial(key)));
             }
 
             maps.add(new ArenaMapConfiguration(worldName, file, locations, unpaintableMaterials, radius, minY));

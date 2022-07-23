@@ -105,7 +105,7 @@ public class Charger extends Weapon {
     @Override
     public void apply(Account account) {
         super.apply(account);
-        account.getInventory().setItem(8, new ItemStack(Material.ARROW));
+        account.getInventory().setItem(9, new ItemStack(Material.ARROW));
     }
 
     @Override

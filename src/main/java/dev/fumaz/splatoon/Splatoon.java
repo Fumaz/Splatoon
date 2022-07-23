@@ -48,7 +48,7 @@ public final class Splatoon extends JavaPlugin {
         getCommand("play").setExecutor(new PlayCommand(accountManager, arenaManager));
         getCommand("start").setExecutor(new StartCommand(accountManager));
         getCommand("leave").setExecutor(new LeaveCommand(accountManager));
-        getCommand("arenastop").setExecutor(new StopCommand(accountManager));
+        getCommand("arenastop").setExecutor(new StopCommand(accountManager, arenaManager));
     }
 
     public AccountManager getAccountManager() {
